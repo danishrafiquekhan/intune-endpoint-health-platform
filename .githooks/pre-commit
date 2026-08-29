@@ -1,0 +1,13 @@
+#!/bin/sh
+# Blocks the commit if gitleaks finds a likely secret in staged changes.
+if command -v gitleaks >/dev/null 2>&1; then
+  gitleaks protect --staged --redact -v
+  if [ $? -ne 0 ]; then
+    echo ""
+    echo "gitleaks found a likely secret in your staged changes. Commit blocked."
+    echo "Remove it, or if this is a false positive, use 'git commit --no-verify' deliberately."
+    exit 1
+  fi
+else
+  echo "Warning: gitleaks not installed, skipping secret scan (brew install gitleaks)"
+fi

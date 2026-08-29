@@ -17,3 +17,8 @@ _(fill in)_
 
 ## Security note
 No real device names, usernames, tenant IDs, or organisational data — sanitise before committing, including in any screenshots.
+
+## One-time setup after cloning
+```bash
+git config core.hooksPath .githooks   # enables the gitleaks secret-scan on commit
+```
