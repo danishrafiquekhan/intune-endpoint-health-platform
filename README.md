@@ -1,20 +1,20 @@
 # Intune Endpoint Health & Application Remediation Platform
 
-**Status: migrate existing work here** — this repo is the home for an already-built Intune endpoint health and application remediation project. Move/import the real project files here (scripts, docs, config) rather than starting over.
+This is my existing project, not something new — I built it doing endpoint/device support work and it's genuinely the strongest thing I have to show, so it needs to actually live here instead of sitting on a work laptop somewhere. Still need to go move the real scripts and docs in — what's below is the IAM tooling I added on top while getting this repo set up, plus a placeholder for the actual migration.
 
-## What this is
-_(fill in: what the platform monitors/remediates)_
+## What it does (once I move it in)
+Proactive remediation for Intune-managed endpoints — catching things like a required app silently failing to install, a compliance policy drifting out of sync, or a device health check that would otherwise just sit there until someone notices during an audit. The idea was to stop finding these problems reactively when a user complains and start finding them before that happens.
 
-## Why I built it
-_(fill in: the operational problem it solves)_
+## Why I built it in the first place
+Manually checking device compliance and app deployment status across a fleet doesn't scale past a small number of machines, and by the time someone notices a pattern of failures it's usually already caused a support ticket. Wanted something that flags the drift automatically instead of waiting for it to become someone's problem.
 
-## How it works
-- `scripts/` — remediation/detection scripts, plus two IAM hygiene scripts (see below)
+## What's in here
+- `scripts/` — the actual remediation/detection scripts once migrated, plus the two IAM scripts below
 - `docs/` — design notes and usage
 
-## IAM hygiene scripts (added for the IAM test-case catalog)
-Two Microsoft Graph scripts that need **no premium license** — Graph API access is free on any tenant tier, including the free [Microsoft 365 Developer Program](https://developer.microsoft.com/microsoft-365/dev-program) sandbox:
-- `scripts/privileged_role_access_review.py` — lists members of a given directory role, flags anyone with 30+ days of sign-in inactivity
+## IAM scripts (added separately, for the IAM side of the study plan)
+Two Graph API scripts that don't need any premium Entra ID license — Graph access is free on any tenant, including the free Microsoft 365 Developer Program sandbox:
+- `scripts/privileged_role_access_review.py` — lists everyone in a given directory role, flags anyone who hasn't signed in for 30+ days
 - `scripts/orphaned_account_detection.py` — flags enabled accounts with no manager assigned
 
 ```bash
@@ -22,31 +22,26 @@ cd scripts
 python3 -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 export AZURE_TENANT_ID=<your tenant id>
-export AZURE_CLIENT_ID=<your app registration client id>   # delegated perms: RoleManagement.Read.Directory, AuditLog.Read.All, User.Read.All
+export AZURE_CLIENT_ID=<your app registration client id>
 python3 privileged_role_access_review.py "Global Administrator"
 python3 orphaned_account_detection.py
 ```
+Both use device-code auth so there's no client secret sitting around to leak. I've checked they parse and import cleanly but haven't run them against a live tenant yet — I don't have one set up.
 
-Both use device-code auth (no client secret to manage or leak) and were syntax-verified but not run end-to-end against a live tenant in this session — see the tool-comparison table below for what's needed to finish that.
-
-## Ideal tool vs. what's used, for the full IAM catalog
-| Test case | Ideal (catalog spec) | Free path used / available |
+## The rest of the IAM catalog
+| Test case | What it needs | Status |
 |---|---|---|
-| 4.1 Access review | Entra ID + PowerShell/Graph | Graph API script above — no premium license needed |
-| 4.2 Orphaned accounts | Entra ID + PowerShell/Graph | Graph API script above — no premium license needed |
-| 4.3 Conditional Access test matrix | Entra ID P1 (Conditional Access) | Needs a real tenant with CA enabled — the free M365 Developer Program sandbox includes an E5 trial (P1+P2) for 90 days; not yet built |
-| 4.4 PIM activation walkthrough | Entra ID P2 (PIM) | Same M365 Developer Program E5 trial covers PIM; not yet built |
-| 4.5 Least-privilege RBAC audit | Azure RBAC | Azure free-tier subscription (already set up for `terraform-labs`) is enough; not yet built |
+| Access review | Graph, no premium license | done, above |
+| Orphaned accounts | Graph, no premium license | done, above |
+| Conditional Access test matrix | Entra ID P1 | needs a real tenant — free via M365 Developer Program's E5 trial |
+| PIM walkthrough | Entra ID P2 | same E5 trial covers this |
+| RBAC audit | Azure subscription | the free-tier one I already use for Terraform would work, just haven't done it |
 
-**Why 4.3–4.5 aren't built yet:** they need an actual configured tenant/subscription with real state to review (policies, role assignments) — there's no meaningful way to demo them against synthetic/empty data. The free M365 Developer Program signup is the concrete next step, not a cost or licensing blocker.
+The last three aren't blocked by cost, they're just not done — there's no honest way to demo a Conditional Access test matrix or a PIM walkthrough against an empty tenant with nothing configured in it. Signing up for the M365 dev sandbox is the actual next step, not something I'm waiting on money for.
 
-## What I learned / trade-offs
-_(fill in)_
-
-## Security note
-No real device names, usernames, tenant IDs, or organisational data — sanitise before committing, including in any screenshots.
+No real device names, usernames, tenant IDs, or org data in this repo — sanitised before anything gets committed, screenshots included.
 
 ## One-time setup after cloning
 ```bash
-git config core.hooksPath .githooks   # enables the gitleaks secret-scan on commit
+git config core.hooksPath .githooks
 ```
