@@ -24,6 +24,7 @@ from azure.identity import DeviceCodeCredential
 
 GRAPH = "https://graph.microsoft.com/v1.0"
 STALE_DAYS = 30
+REQUEST_TIMEOUT = 30  # seconds
 
 
 def get_token() -> str:
@@ -34,19 +35,32 @@ def get_token() -> str:
     return cred.get_token("https://graph.microsoft.com/.default").token
 
 
+def _escape_odata_literal(value: str) -> str:
+    """Escape a value for safe use inside a single-quoted OData filter literal.
+
+    OData escapes an embedded single quote by doubling it. Without this, a
+    role name containing a quote could alter the filter's meaning (OData/Graph
+    injection) instead of just failing to match.
+    """
+    return value.replace("'", "''")
+
+
 def get_role_members(token: str, role_display_name: str) -> list[dict]:
     headers = {"Authorization": f"Bearer {token}"}
 
     roles = requests.get(
         f"{GRAPH}/directoryRoles",
         headers=headers,
-        params={"$filter": f"displayName eq '{role_display_name}'"},
+        params={"$filter": f"displayName eq '{_escape_odata_literal(role_display_name)}'"},
+        timeout=REQUEST_TIMEOUT,
     ).json()
     if not roles.get("value"):
         raise SystemExit(f"Role '{role_display_name}' not found or not activated in this tenant.")
     role_id = roles["value"][0]["id"]
 
-    members = requests.get(f"{GRAPH}/directoryRoles/{role_id}/members", headers=headers).json()
+    members = requests.get(
+        f"{GRAPH}/directoryRoles/{role_id}/members", headers=headers, timeout=REQUEST_TIMEOUT
+    ).json()
     return members.get("value", [])
 
 
@@ -61,6 +75,7 @@ def flag_stale_signins(token: str, members: list[dict]) -> None:
             f"{GRAPH}/users/{member['id']}",
             headers=headers,
             params={"$select": "displayName,userPrincipalName,signInActivity"},
+            timeout=REQUEST_TIMEOUT,
         ).json()
         last_signin = (user.get("signInActivity") or {}).get("lastSignInDateTime")
         upn = user.get("userPrincipalName", "?")

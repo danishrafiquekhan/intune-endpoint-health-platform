@@ -20,6 +20,7 @@ import requests
 from azure.identity import DeviceCodeCredential
 
 GRAPH = "https://graph.microsoft.com/v1.0"
+REQUEST_TIMEOUT = 30  # seconds
 
 
 def get_token() -> str:
@@ -42,9 +43,11 @@ def find_orphaned_accounts(token: str) -> list[dict]:
     }
 
     while url:
-        resp = requests.get(url, headers=headers, params=params).json()
+        resp = requests.get(url, headers=headers, params=params, timeout=REQUEST_TIMEOUT).json()
         for user in resp.get("value", []):
-            manager = requests.get(f"{GRAPH}/users/{user['id']}/manager", headers=headers)
+            manager = requests.get(
+                f"{GRAPH}/users/{user['id']}/manager", headers=headers, timeout=REQUEST_TIMEOUT
+            )
             if manager.status_code == 404:
                 orphaned.append(user)
         url = resp.get("@odata.nextLink")
