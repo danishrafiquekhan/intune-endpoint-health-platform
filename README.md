@@ -1,5 +1,7 @@
 **Intune Endpoint Health & Application Remediation Platform**
 
+[![CI](https://github.com/danishrafiquekhan/intune-endpoint-health-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/danishrafiquekhan/intune-endpoint-health-platform/actions/workflows/ci.yml)
+
 This is my existing project, not something new — I built it doing endpoint/device support work and it's genuinely the strongest thing I have to show, so it needs to actually live here instead of sitting on a work laptop somewhere. Still need to go move the real scripts and docs in — what's below is the IAM tooling I added on top while getting this repo set up, plus a placeholder for the actual migration.
 
 **What it does (once I move it in)**
