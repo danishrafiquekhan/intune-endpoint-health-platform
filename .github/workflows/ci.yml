@@ -1,0 +1,51 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-scripts:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: scripts
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Import-check IAM scripts (no live tenant needed)
+        run: |
+          python3 -c "
+          import importlib.util
+          for f in ['orphaned_account_detection.py', 'privileged_role_access_review.py']:
+              spec = importlib.util.spec_from_file_location('m', f)
+              m = importlib.util.module_from_spec(spec)
+              spec.loader.exec_module(m)
+              print(f, 'imports OK')
+          "
+
+      - name: Asset reconciliation matches checked-in sample report
+        run: |
+          python3 asset_reconciliation.py sample_device_records.csv --out /tmp/actual_report.csv
+          diff /tmp/actual_report.csv sample_reconciliation_report.csv
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Gitleaks scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
