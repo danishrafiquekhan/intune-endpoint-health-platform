@@ -1,0 +1,18 @@
+group_id,confidence,match_reason,match_detail,asset_id,source,device_name,serial_number,last_check_in,suggested_canonical
+1,high,same serial number,"serial 'SN20T5540' shared across names ['WH-DT-6001', 'WH-DT-6001', 'WH-DT-6001-OLD']",INV-10400,LegacyCMDB,WH-DT-6001,SN-20T5540,2025-08-20,False
+1,high,same serial number,"serial 'SN20T5540' shared across names ['WH-DT-6001', 'WH-DT-6001', 'WH-DT-6001-OLD']",MSI-20340,Intune,WH-DT-6001,SN-20T5540,2026-07-01,True
+1,high,same serial number,"serial 'SN20T5540' shared across names ['WH-DT-6001', 'WH-DT-6001', 'WH-DT-6001-OLD']",INV-10455,LegacyCMDB,WH-DT-6001-OLD,SN-20T5540,2024-05-01,False
+2,high,same serial number,"serial 'SN4B819F2' shared across names ['HR-DT-1120', 'HR-DT-1120-NEW']",INV-10088,LegacyCMDB,HR-DT-1120,SN-4B819F2,2025-11-15,False
+2,high,same serial number,"serial 'SN4B819F2' shared across names ['HR-DT-1120', 'HR-DT-1120-NEW']",MSI-20077,Intune,HR-DT-1120-NEW,SN-4B819F2,2026-08-25,True
+3,high,same serial number,"serial 'SN7C2A91X' shared across names ['FIN-LT-0451', 'FIN-LT-0451']",INV-10012,LegacyCMDB,FIN-LT-0451,SN-7C2A91X,2026-06-01,False
+3,high,same serial number,"serial 'SN7C2A91X' shared across names ['FIN-LT-0451', 'FIN-LT-0451']",MSI-20034,Intune,FIN-LT-0451,SN-7C2A91X,2026-08-30,True
+4,high,same serial number,"serial 'SN99A2E71' shared across names ['OPS-LT-3390', 'OPS-LT-3390']",INV-10145,LegacyCMDB,OPS-LT-3390,SN-99A2E71,2026-01-10,False
+4,high,same serial number,"serial 'SN99A2E71' shared across names ['OPS-LT-3390', 'OPS-LT-3390']",MSI-20101,Intune,OPS-LT-3390,SN-99A2E71,2026-08-01,True
+5,medium,same device name (case/formatting variant),"names ['IT-DT-0099', 'IT DT 0099'] normalize to 'itdt0099'",INV-10233,LegacyCMDB,IT-DT-0099,SN-55X0012,2025-12-05,False
+5,medium,same device name (case/formatting variant),"names ['IT-DT-0099', 'IT DT 0099'] normalize to 'itdt0099'",MSI-20199,Intune,IT DT 0099,SN-71Y4483,2026-06-11,True
+6,medium,same device name (case/formatting variant),"names ['SALES-LT-2210', 'Sales_Lt_2210'] normalize to 'saleslt2210'",INV-10201,LegacyCMDB,SALES-LT-2210,SN-11C4402,2025-09-01,False
+6,medium,same device name (case/formatting variant),"names ['SALES-LT-2210', 'Sales_Lt_2210'] normalize to 'saleslt2210'",MSI-20150,Intune,Sales_Lt_2210,SN-88Z9910,2026-07-20,True
+7,low,fuzzy name similarity,"names ['MKT-LT-4471', 'MKT-LT-4472'] are similar but not identical after normalization (ratio >= 0.82)",INV-10300,LegacyCMDB,MKT-LT-4471,SN-33P8820,2025-10-02,False
+7,low,fuzzy name similarity,"names ['MKT-LT-4471', 'MKT-LT-4472'] are similar but not identical after normalization (ratio >= 0.82)",MSI-20255,Intune,MKT-LT-4472,SN-60R2201,2026-05-14,True
+8,low,fuzzy name similarity,"names ['ENG-LT-5502', 'ENG-LT-550'] are similar but not identical after normalization (ratio >= 0.82)",INV-10321,LegacyCMDB,ENG-LT-5502,SN-14Q7761,2026-02-18,False
+8,low,fuzzy name similarity,"names ['ENG-LT-5502', 'ENG-LT-550'] are similar but not identical after normalization (ratio >= 0.82)",MSI-20288,Intune,ENG-LT-550,SN-82S3390,2026-08-10,True
